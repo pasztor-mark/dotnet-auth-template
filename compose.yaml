@@ -1,0 +1,7 @@
+﻿services:
+  auth-template:
+    image: auth-template
+    build:
+      context: .
+      dockerfile: Dockerfile
+

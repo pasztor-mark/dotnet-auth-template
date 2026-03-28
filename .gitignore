@@ -1,6 +1,11 @@
 bin/
 obj/
+.idea
+Migrations
+auth-template.sln.DotSettings.user
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
 .env
+*/.DS_Store
+*.DS_Store
