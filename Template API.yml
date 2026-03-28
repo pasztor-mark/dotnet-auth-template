@@ -1,0 +1,603 @@
+opencollection: 1.0.0
+info:
+  name: Template API
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ''
+      port: ''
+      auth:
+        username: ''
+        password: ''
+      bypassProxy: ''
+  environments:
+    - name: Template API
+      variables:
+        - name: API_URL
+          value: https://localhost:5377/api
+        - name: username
+          value: exampleadmin
+        - name: targetUsername
+          value: exampleuser
+        - name: userId
+          value: 019d368c-4d42-743c-a153-844f20a6917f
+items:
+  - info:
+      name: Auth
+      type: folder
+      seq: 1
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Change Username
+          type: http
+          seq: 8
+        http:
+          method: PATCH
+          url: '{{API_URL}}/auth/change/username'
+          body:
+            type: json
+            data: |-
+              {
+                  "newUsername": "notExampleUser"
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Deactivate Account
+          type: http
+          seq: 11
+        http:
+          method: DELETE
+          url: '{{API_URL}}/auth/me/delete'
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Change Password
+          type: http
+          seq: 7
+        http:
+          method: PATCH
+          url: '{{API_URL}}/auth/change/password'
+          body:
+            type: json
+            data: |-
+              {
+                  "currentPassword": "ExampleUser123!",
+                  "newPassword": "ExampleUser456?"
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Get Own Data
+          type: http
+          seq: 2
+        http:
+          method: GET
+          url: '{{API_URL}}/auth/self'
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Post Heartbeat
+          type: http
+          seq: 10
+        http:
+          method: POST
+          url: ''
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Log Out from All Devices
+          type: http
+          seq: 5
+        http:
+          method: POST
+          url: '{{API_URL}}/auth/logout'
+          headers:
+            - name: User-Agent
+              value: DifferentRuntime
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Log Out from 1 device
+          type: http
+          seq: 4
+        http:
+          method: POST
+          url: '{{API_URL}}/auth/logout/device'
+          headers:
+            - name: User-Agent
+              value: DifferentRuntime
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Refresh JWT
+          type: http
+          seq: 13
+        http:
+          method: POST
+          url: '{{API_URL}}/auth/refresh'
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Reactivate Account
+          type: http
+          seq: 12
+        http:
+          method: PUT
+          url: '{{API_URL}}/auth/me/reactivate'
+          headers:
+            - name: User-Agent
+              value: DifferentRuntime
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Get Preferences
+          type: http
+          seq: 6
+        http:
+          method: GET
+          url: '{{API_URL}}/auth/preferences'
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: test view
+          type: http
+          seq: 9
+        http:
+          method: GET
+          url: ''
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Register User
+          type: http
+          seq: 1
+        http:
+          method: POST
+          url: '{{API_URL}}/auth/register'
+          body:
+            type: json
+            data: |-
+              {
+                   "email": "user@example.hu",
+                  "fullName": "Example User",
+                  "password": "ExampleUser123!",
+                  "username": "ExampleUser" 
+              }
+          auth: inherit
+        runtime:
+          scripts:
+            - type: after-response
+              code: |-
+                if (res.getStatus() === 201) {
+                  const data = res.getBody();
+                  
+                  if (data.data.username) {
+                    bru.setEnvVar("targetUsername", data.data.userName);
+                    bru.setEnvVar("username", data.data.username);
+                  }
+                }
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Log In User
+          type: http
+          seq: 3
+        http:
+          method: POST
+          url: '{{API_URL}}/auth/login'
+          headers:
+            - name: User-Agent
+              value: DifferentRuntime
+              disabled: true
+          body:
+            type: json
+            data: |-
+              {
+                  "email": "user@example.hu",
+                  "password": "ExampleUser!"
+              }
+          auth: inherit
+        runtime:
+          scripts:
+            - type: after-response
+              code: |-
+                if (res.getStatus() === 200) {
+                  const data = res.getBody();
+                  if (data.data.userName) {
+                    bru.setEnvVar("username", data.data.userName);
+                    bru.setEnvVar("targetUsername", data.data.userName);
+                  }
+                }
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Register as Admin
+          type: http
+          seq: 14
+        http:
+          method: POST
+          url: '{{API_URL}}/auth/register/admin'
+          body:
+            type: json
+            data: |-
+              {
+                   "email": "admin@example.hu",
+                  "fullName": "Example Admin",
+                  "password": "You_should_probably_change_this_1!",
+                  "username": "ExampleAdmin" 
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+  - info:
+      name: E-mail
+      type: folder
+      seq: 2
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Get Forgot Password E-mail
+          type: http
+          seq: 4
+        http:
+          method: POST
+          url: '{{API_URL}}/email/forgot-password/send'
+          body:
+            type: json
+            data: |-
+              {
+                  "email": "user@ecchungary.hu"
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Confirm E-mail
+          type: http
+          seq: 2
+        http:
+          method: GET
+          url: ''
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Get Confirmation E-mail
+          type: http
+          seq: 1
+        http:
+          method: POST
+          url: '{{API_URL}}/email/confirm/send'
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Get Change Email
+          type: http
+          seq: 5
+        http:
+          method: POST
+          url: '{{API_URL}}/email/change-email/send'
+          body:
+            type: json
+            data: |-
+              {
+                  "email": "user@ecchungary.hu"
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Forgot Password
+          type: http
+          seq: 3
+        http:
+          method: POST
+          url: '{{API_URL}}/email/forgot-password'
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+  - info:
+      name: Profile
+      type: folder
+      seq: 3
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Get Profile of User
+          type: http
+          seq: 2
+        http:
+          method: GET
+          url: '{{API_URL}}/profile/u/'
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Get Own Profile
+          type: http
+          seq: 1
+        http:
+          method: GET
+          url: '{{API_URL}}/profile/me'
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Get Audit Logs of User
+          type: http
+          seq: 4
+        http:
+          method: GET
+          url: '{{API_URL}}/profile/{{targetUsername}}/audit'
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: Toggle Profile Visibility
+          type: http
+          seq: 3
+        http:
+          method: PATCH
+          url: '{{API_URL}}/profile/{{username}}/update/visibility'
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+  - info:
+      name: Admin
+      type: folder
+      seq: 4
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Dashboard
+          type: folder
+          seq: 1
+        request:
+          auth: inherit
+        items:
+          - info:
+              name: Get System Health
+              type: http
+              seq: 3
+            http:
+              method: GET
+              url: '{{API_URL}}/admin/dashboard/system-health'
+              auth: inherit
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: Get Summary
+              type: http
+              seq: 4
+            http:
+              method: GET
+              url: '{{API_URL}}/admin/dashboard/summary'
+              auth: inherit
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: Get User Audit Logs
+              type: http
+              seq: 5
+            http:
+              method: GET
+              url: '{{API_URL}}/admin/dashboard/audit/{{username}}'
+              auth: inherit
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: Get Users By Tag
+              type: http
+              seq: 1
+            http:
+              method: GET
+              url: '{{API_URL}}/admin/dashboard/users/tag/{{tagName}}'
+              auth: inherit
+            runtime:
+              variables:
+                - name: tagName
+                  value: Member
+              scripts:
+                - type: after-response
+                  code: |-
+                    if (res.getStatus() === 200) {
+                        const data = res.getBody();
+                        const users = data.data || data; 
+
+                        if (users && users.length > 0) {
+                            bru.setEnvVar("userId", users[0].id || users[0].userId); 
+                            bru.setEnvVar("targetUsername", users[0].userName || users[0].username);
+                        }
+                    }
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: Get User Growth
+              type: http
+              seq: 2
+            http:
+              method: GET
+              url: '{{API_URL}}/admin/dashboard/user-growth'
+              auth: inherit
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+      - info:
+          name: User Management
+          type: folder
+          seq: 1
+        request:
+          auth: inherit
+        items:
+          - info:
+              name: Ban User
+              type: http
+              seq: 2
+            http:
+              method: DELETE
+              url: '{{API_URL}}/admin/u/{{targetUsername}}/ban'
+              headers:
+                - name: Content-Type
+                  value: application/json
+              body:
+                type: json
+                data: |-
+                  {
+                      "reason": "Violation of Terms of Service"
+                  }
+              auth: inherit
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: Confirm Subscription Payment
+              type: http
+              seq: 4
+            http:
+              method: PATCH
+              url: '{{API_URL}}/admin/u/{{targetUsername}}/subscription/confirm/{{targetTierId}}'
+              auth: inherit
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: Get User For Management
+              type: http
+              seq: 1
+            http:
+              method: GET
+              url: '{{API_URL}}/admin/u/{{username}}'
+              auth: inherit
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: Unban User
+              type: http
+              seq: 3
+            http:
+              method: PATCH
+              url: '{{API_URL}}/admin/u/{{targetUsername}}/unban'
+              auth: inherit
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+bundled: true
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    exportedAt: '2026-03-28T23:49:25.560Z'
+    exportedUsing: Bruno
