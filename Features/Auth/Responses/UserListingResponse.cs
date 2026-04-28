@@ -6,6 +6,7 @@ public class UserListingResponse
 {
     public Guid UserId { get; set; }
     public string UserName { get; set; }
+    public string DisplayName { get; set; }
     public string AvatarUrl { get; set; }
     public bool Flagged { get; set; }
 
@@ -14,11 +15,12 @@ public class UserListingResponse
         
     }
 
-    public UserListingResponse(AppUser u, string avatarUrl)
+    public UserListingResponse(AppUser u)
     {
         this.UserId = u.Id;
-        this.AvatarUrl = avatarUrl;
+        this.AvatarUrl = u.AvatarUrl;
         this.Flagged = u.Flagged;
+        this.DisplayName = u.DisplayName;
         this.UserName = u.NormalizedUserName.ToLower();
     }
 }

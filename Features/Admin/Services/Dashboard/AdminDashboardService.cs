@@ -281,10 +281,9 @@ public class AdminDashboardService(
         
         try
         {
-            var avatarUrl = await _ctx.UserProfiles.AsNoTracking().Where(u => u.UserId == user.Id).Select(u => u.AvatarUrl).FirstOrDefaultAsync(ct);
             var updates = await _ctx.UserUpdates.Where(u => u.UserId == user.Id).ToListAsync(ct);
 
-            var ret = new AuditLogResponse(user, avatarUrl, updates.Select(u => new AuditLogItemResponse(u)).ToList());
+            var ret = new AuditLogResponse(user, updates.Select(u => new AuditLogItemResponse(u)).ToList());
             return LogicResult<AuditLogResponse>.Ok(ret);
         }
         catch (Exception e)

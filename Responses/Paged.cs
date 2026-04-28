@@ -1,31 +1,24 @@
-﻿using auth_template.Utilities;
-
+﻿
 namespace auth_template.Responses;
 
 public class Paged<T>
 {
-    public Paged(List<T>? data, int? page, int? pageSize)
+    public Paged(List<T>? data, int page, int pageSize, int totalCount)
     {
-        this.data = data ?? [];
-        Page = page ?? 1;
-        ItemCount = data?.Count ?? 0;
-        PageSize = pageSize ?? 0;
+        Data = data ?? [];
+        Page = page;
+        PageSize = pageSize;
+        TotalCount = totalCount;
+        ItemCount = Data.Count;
+        TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
     }
+
     public Paged() {}
 
-    public List<T> data { get; set; }
+    public List<T> Data { get; set; } = [];
     public int Page { get; set; }
-    public int ItemCount { get; set; }
     public int PageSize { get; set; }
-
-    
-    public Paged(List<T> data, PaginationScheme pagination)
-    {
-        this.data = data;
-        this.ItemCount = data.Count;
-        this.Page = pagination.page;
-        this.PageSize = pagination.pageSize;
-    }
-
-
+    public int ItemCount { get; set; }
+    public int TotalCount { get; set; }
+    public int TotalPages { get; set; }
 }

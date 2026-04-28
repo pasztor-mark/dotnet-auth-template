@@ -88,7 +88,7 @@ public class AuthService(
 
                 return LogicResult<SelfResponse>.Error(errors);
             }
-            var createdProfile = new AppUserProfile(user, user.Id);
+            var createdProfile = new AppUserProfile(user);
             await _ctx.UserProfiles.AddAsync(createdProfile);
 
             var tagAssignmentResult = await _permissionUtility.AssignTagsToUserAsync(
@@ -527,7 +527,7 @@ public class AuthService(
             return LogicResult<SelfResponse>.Error(errors);
         }
 
-        var createdProfile = new AppUserProfile(user, user.Id);
+        var createdProfile = new AppUserProfile(user);
         await _ctx.UserProfiles.AddAsync(createdProfile);
 
         var tagAssignmentResult = await _permissionUtility.AssignTagsToUserAsync(

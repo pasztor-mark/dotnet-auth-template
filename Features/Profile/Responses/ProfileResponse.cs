@@ -1,3 +1,4 @@
+
 using auth_template.Features.Profile.Entities;
 
 namespace auth_template.Features.Profile.Responses;
@@ -20,11 +21,10 @@ public class ProfileResponse
 
     public ProfileResponse(AppUserProfile p)
     {
-        this.AvatarUrl = p.AvatarUrl;
+        this.AvatarUrl = p.User.AvatarUrl;
         this.Bio = p.Bio;
         this.userName = p.User.UserName;
         this.DateOfBirth = p.DateOfBirth;
-        this.DisplayName = p.DisplayName;
         this.Headline = p.Headline;
         this.IsPublic = p.IsPublic;
         this.Location = p.Location;
@@ -43,4 +43,3 @@ public class ProfileResponse
         isPublic = IsPublic;
     }
 }
-

@@ -13,9 +13,9 @@ public class AuditLogResponse
         
     }
 
-    public AuditLogResponse(AppUser user, string avatarUrl ,List<AuditLogItemResponse> logs)
+    public AuditLogResponse(AppUser user ,List<AuditLogItemResponse> logs)
     {
-        this.User = new UserListingResponse(user, avatarUrl);
+        this.User = new UserListingResponse(user);
         this.Logs = logs;
     }
 }

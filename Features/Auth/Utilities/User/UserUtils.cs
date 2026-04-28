@@ -152,6 +152,49 @@ public class UserUtils(IHttpContextAccessor _http, AppDbContext _ctx, UserManage
 
         return null;
     }
+    public async Task<List<AppUser>> GetAndUpgradeUsersByFullNameAsync(string rawFullName, bool ignoreQueryFilters = false, Expression<Func<AppUser, bool>>? predicate = null)
+    {
+        if (string.IsNullOrWhiteSpace(rawFullName)) return new List<AppUser>();
+    
+        string normalizedFullName = rawFullName.Trim().ToUpperInvariant();
+        int versionToTry = currentVersion;
+
+        while (versionToTry >= 1)
+        {
+            string lookupIndex = _encryptor.GenerateBlindIndex(normalizedFullName, versionToTry);
+
+            var query = _ctx.Users.Where(u => u.FullNameIndex == lookupIndex);
+
+            if (ignoreQueryFilters)
+            {
+                query = query.IgnoreQueryFilters();
+            }
+
+            if (predicate is not null)
+            {
+                query = query.Where(predicate);
+            }
+
+            var users = await query.ToListAsync();
+
+            if (users.Any())
+            {
+                if (versionToTry < currentVersion)
+                {
+                    foreach (var user in users.Where(u => !u.Flagged))
+                    {
+                        user.FullNameIndex = _encryptor.GenerateBlindIndex(normalizedFullName, currentVersion);
+                        user.PlaintextFullNameForIndexing = normalizedFullName;
+                    }
+                }
+                return users;
+            }
+
+            versionToTry--;
+        }
+
+        return new List<AppUser>();
+    }
     public async Task<AppUser?> GetAndUpgradeUserByEmailAsync(string rawEmail, bool ignoreQueryFilters = false, Expression<Func<AppUser, bool>>? predicate = null)
     {
         if (string.IsNullOrWhiteSpace(rawEmail)) return null;

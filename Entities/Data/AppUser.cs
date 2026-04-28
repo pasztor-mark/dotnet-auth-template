@@ -9,14 +9,22 @@ namespace auth_template.Entities.Data;
 
 [Index(nameof(EmailIndex))]
 [Index(nameof(UsernameIndex))]
+[Index(nameof(FullNameIndex))]
+[Index(nameof(DisplayName))]
 public class AppUser : IdentityUser<Guid>, IAnonymizable
 {
-    public string EmailIndex { get; set; }
-    public string UsernameIndex { get; set; }
+    public string EmailIndex { get; set; } = null!;
+    public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
+    public string UsernameIndex { get; set; } = null!;
     public bool Flagged { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
+    public string FullNameIndex { get; set; } = null!;
+    
     public DateTime? AnonymizedAt { get; set; }
     public virtual AppUserProfile Profile { get; set; }
+    public string? AvatarUrl { get; set; }
     [NotMapped] public string? PlaintextEmailForIndexing { get; set; }
+    [NotMapped] public string? PlaintextFullNameForIndexing { get; set; }
     [NotMapped] public string? PlaintextUsernameForIndexing { get; set; }
 
     public DateTime? BannedAt { get; set; }
@@ -32,6 +40,8 @@ public class AppUser : IdentityUser<Guid>, IAnonymizable
         this.NormalizedEmail = fakeEmail.ToUpperInvariant().Trim();
         this.Flagged = true;
         this.AnonymizedAt = DateTime.UtcNow;
+        this.DisplayName = "Deactivated Account";
+        this.AvatarUrl = null;
     }
 
     public void Reactivate(ReactivateAccountDto dto)
@@ -43,7 +53,8 @@ public class AppUser : IdentityUser<Guid>, IAnonymizable
         this.NormalizedEmail = normalizedEmail;
         this.AnonymizedAt = null;
         this.Flagged = false;
-        
+        this.DisplayName = dto.DisplayName;
+        this.PlaintextFullNameForIndexing = dto.DisplayName;
         this.UserName = dto.Username;
         this.NormalizedUserName = normalizedUserName;
         this.PlaintextEmailForIndexing = normalizedEmail;

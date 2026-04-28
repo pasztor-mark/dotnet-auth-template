@@ -153,6 +153,15 @@ public class AppDbContext(
                         _encryptor.GenerateBlindIndex(plaintextUsername.Trim().ToUpperInvariant(), _currentVersion);
                 }
             }
+            var plaintextFullName = entry.Entity.PlaintextFullNameForIndexing;
+            if (!string.IsNullOrEmpty(plaintextUsername))
+            {
+                if (plaintextFullName != "Deactivated Account")
+                {
+                    entry.Entity.FullNameIndex =
+                        _encryptor.GenerateBlindIndex(plaintextFullName.Trim().ToUpperInvariant(), _currentVersion);
+                }
+            }
         }
 
         foreach (var entry in ChangeTracker.Entries<ISoftDeletable>())

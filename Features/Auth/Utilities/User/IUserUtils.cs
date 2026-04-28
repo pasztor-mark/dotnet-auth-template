@@ -25,4 +25,5 @@ public interface IUserUtils
     Task<AppUser?> GetAndUpgradeUserByUsernameAsync(string rawEmail, string rawUsername, bool ignoreQueryFilters = false, Expression<Func<AppUser, bool>>? predicate = null);
     Task<Guid?> GetAndUpgradeUserIdByUsernameAsync(string rawUsername, bool ignoreQueryFilters = false, Expression<Func<AppUser, bool>>? predicate = null);
     Task<LogicResult<RefreshResponse>> RefreshWithTokenAsync(string refreshToken, string currentUa, string currentIp);
+    Task<List<AppUser>> GetAndUpgradeUsersByFullNameAsync(string rawFullName, bool ignoreQueryFilters = false, Expression<Func<AppUser, bool>>? predicate = null);
 }

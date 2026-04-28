@@ -40,6 +40,8 @@
       <Folder Include="Features\Email\Responses\" />
       <Folder Include="Features\Email\Validation\" />
       <Folder Include="Features\Profile\Attributes\" />
+      <Folder Include="Features\Profile\Transfer\Create\" />
+      <Folder Include="Features\Profile\Validation\Create\" />
       <Folder Include="Migrations\" />
     </ItemGroup>
 

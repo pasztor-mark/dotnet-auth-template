@@ -130,7 +130,7 @@ public class ProfileService(
             return LogicResult<ProfileResponse>.NotFound("Profile not found.");
         }
 
-        var oldAvatarUrl = profile.AvatarUrl;
+        var oldAvatarUrl = profile.User.AvatarUrl;
 
 
         //profile.AvatarUrl = avatarUrl;
